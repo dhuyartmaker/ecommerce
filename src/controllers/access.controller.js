@@ -12,7 +12,7 @@ class AccesController {
 
     signIn = asyncHandler(async (req, res, next) => {
         return new CreatedResponseSuccess({
-            message: "Registed!",
+            message: "Success!",
             metadata: await accessService.signIn(req.body)
         }).send(res)
     })

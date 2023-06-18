@@ -8,3 +8,12 @@ Content-Type: application/json
     "email": "dhuy2411_test12@gmail.com",
     "password": "123456"
 }   
+
+### signIn
+POST {{url_dev}}/v1/api/shop/signin
+Content-Type: application/json
+
+{
+    "email": "dhuy2411_test12@gmail.com",
+    "password": "123456"
+}   

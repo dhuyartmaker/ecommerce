@@ -9,11 +9,34 @@ const shopService = require("./shop.service");
 
 class AccessService {
     signIn = async ({ email, password, refreshToken = "" }) => {
-        const findShop = await shopService.findByEmail({ email })
+        const findShop = await shopService.findByEmail({ email, select: { password: 1 }})
         if (!findShop) throw new BadRequestError("Shop isn't registered!");
 
         const comparePassword = bcrypt.compare(password, findShop.password)
-        if (!comparePassword) throw new AuthFailError()
+        if (!comparePassword) throw new AuthFailError();
+
+        const { publicKey, privateKey } = crypto.generateKeyPairSync("rsa", {
+            modulusLength: 4096,
+            publicKeyEncoding: {
+                type: 'pkcs1',
+                format: 'pem'
+            },
+            privateKeyEncoding: {
+                type: 'pkcs1',
+                format: 'pem'
+            }
+        })
+
+        const tokens = await createTokenPair({ userId: findShop._id, email}, privateKey)
+        await keyTokenService.createToken({
+            userId: findShop._id,
+            publicKey,
+            refreshToken: tokens.refreshToken
+        })
+        return {
+            shop: await shopService.findByEmail({ email }),
+            tokens
+        }
     }
 
     signUp = async (payload) => {
@@ -50,22 +73,20 @@ class AccessService {
 
             console.log("==public==", publicKey)
             console.log("==privateKey==", privateKey)
+            const tokens = await createTokenPair({ userId: createShop._id, email}, privateKey)
 
             const publicKeyString = await keyTokenService.createToken({
                 userId: createShop._id,
                 publicKey,
+                refreshToken: tokens.refreshToken
             })
+            // const publicKeyObject = crypto.createPublicKey(publicKeyString)
 
-            if (!publicKeyString) {
-                return {
-                    message: "Error"
-                }
-            }
-            const publicKeyObject = crypto.createPublicKey(publicKeyString)
-            console.log("===publicKeyString===", publicKeyObject)
-            const tokens = await createTokenPair({ userId: createShop._id, email}, privateKey)
             console.log("==tokens==", tokens)
-            return tokens
+            return {
+                shop: await shopService.findByEmail({ email }),
+                tokens,
+            }
         }
 
         return null

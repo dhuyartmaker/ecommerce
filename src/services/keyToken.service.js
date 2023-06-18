@@ -5,12 +5,18 @@ const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 
 class KeyTokenService {
-    createToken = async ({ userId , publicKey }) => {
+    createToken = async ({ userId , publicKey, refreshToken }) => {
         try {
             const publicKeyString = await publicKey.toString();
-            const createToken = await keytokenModel.create({
-                user: userId,
-                publicKey: publicKeyString
+            const createToken = await keytokenModel.findOneAndUpdate({
+                user: userId
+            },{
+                publicKey: publicKeyString,
+                $push: { refreshTokenUsed: refreshToken },
+                refreshToken,
+            }, {
+                upsert: true,
+                new: true
             })
             return createToken ? createToken.publicKey : null
         } catch (error) {
