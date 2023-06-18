@@ -1,0 +1,6 @@
+.env
+*config*.json
+leetcode
+node_modules
+package-lock.json
+.vscode

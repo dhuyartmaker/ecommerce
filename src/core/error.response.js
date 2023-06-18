@@ -1,0 +1,49 @@
+const StatusCode = {
+    BadRequest: 400,
+    AuthFail: 401,
+    Forbidden: 403,
+    Conflict: 409,
+}
+const ResponseMessageCode = {
+    Forbidden: 'Bad request errror!',
+    AuthFail: 'Authenticate fail!',
+    Conflict: 'Conflict error!',
+    BadRequest: 'Bad request!'
+}
+class ErrorResponse extends Error {
+    constructor(message, status) {
+        super(message || "Something error!")
+        this.status = status
+    }
+}
+
+class ConflictRequestError extends ErrorResponse {
+    constructor(message = ResponseMessageCode.Conflict, status = StatusCode.Conflict) {
+        super(message, status)
+    }
+}
+
+class ForbiddenRequestError extends ErrorResponse {
+    constructor(message = ResponseMessageCode.Forbidden, status = StatusCode.Forbidden) {
+        super(message, status)
+    }
+}
+
+class BadRequestError extends ErrorResponse {
+    constructor(message = ResponseMessageCode.BadRequest, status = StatusCode.BadRequest) {
+        super(message, status)
+    }
+}
+
+class AuthFailError extends ErrorResponse {
+    constructor(message = ResponseMessageCode.AuthFail, status = StatusCode.AuthFail) {
+        super(message, status)
+    }
+}
+
+module.exports = {
+    ConflictRequestError,
+    ForbiddenRequestError,
+    BadRequestError,
+    AuthFailError
+}
