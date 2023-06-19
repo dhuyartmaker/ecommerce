@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const { RoleShop } = require("../config/constant");
 const keytokenModel = require("../models/keytoken.model");
 const shopModel = require("../models/shop.model");
@@ -23,6 +24,14 @@ class KeyTokenService {
             console.log("Error:", error)
             return null
         }
+    }
+
+    findByUserId = async (userId) => {
+        return await keytokenModel.findOne({ user: userId }).lean()
+    }
+
+    removeById = async (_id) => {
+        return await keytokenModel.deleteOne({ _id })
     }
 }
 

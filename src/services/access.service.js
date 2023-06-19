@@ -91,6 +91,11 @@ class AccessService {
 
         return null
     }
+
+    signOut = async (keyStore) => {
+        const deleteKeyStore = await keyTokenService.removeById(keyStore._id)
+        return deleteKeyStore;
+    }
 }
 
 module.exports = new AccessService()

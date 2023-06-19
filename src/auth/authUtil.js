@@ -1,4 +1,7 @@
 const JWT = require('jsonwebtoken')
+const { asyncHandler } = require('../helpers/asyncHandler')
+const { AuthFailError } = require('../core/error.response')
+const keyTokenService = require('../services/keyToken.service')
 
 const createTokenPair = async (payload, privateKey) => {
     try {
@@ -27,7 +30,24 @@ const verify = async ({ token, publicKey }) => {
     }
 }
 
+const authenticate = asyncHandler(async (req, res, next) => {
+    console.log("==req.headers==", req.headers)
+    const userId = req.headers["user-id"]
+    if (!userId) throw new AuthFailError()
+    const userToken = await keyTokenService.findByUserId(userId)
+    if (!userToken) throw new AuthFailError("Not found user")
+
+    const accessToken = req.headers.token;
+    if (!accessToken) throw new AuthFailError("Not found token")
+
+    const decodeUser = await JWT.decode(accessToken, userToken.publicKey);
+    if (decodeUser.userId !== userId) throw new AuthFailError("Authenticate fail!")
+    req.keyStore = userToken
+    return next()
+})
+
 module.exports = {
     createTokenPair,
     verify,
+    authenticate,
 }
