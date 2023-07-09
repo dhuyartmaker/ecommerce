@@ -3,12 +3,14 @@ const StatusCode = {
     AuthFail: 401,
     Forbidden: 403,
     Conflict: 409,
+    NotFound: 404
 }
 const ResponseMessageCode = {
     Forbidden: 'Bad request errror!',
     AuthFail: 'Authenticate fail!',
     Conflict: 'Conflict error!',
-    BadRequest: 'Bad request!'
+    BadRequest: 'Bad request!',
+    NotFound: 'Not found error!'
 }
 class ErrorResponse extends Error {
     constructor(message, status) {
@@ -41,9 +43,16 @@ class AuthFailError extends ErrorResponse {
     }
 }
 
+class NotFoundError extends ErrorResponse {
+    constructor(message = ResponseMessageCode.NotFound, status = StatusCode.NotFound) {
+        super(message, status)
+    }
+}
+
 module.exports = {
     ConflictRequestError,
     ForbiddenRequestError,
     BadRequestError,
-    AuthFailError
+    AuthFailError,
+    NotFoundError
 }

@@ -14,6 +14,9 @@ var keyTokenSchema = new mongoose.Schema({
     refreshToken: {
         type: String,
     },
+    accessToken: {
+        type: String,
+    },
     refreshTokenUsed:{
         type: Array, default: []
     },

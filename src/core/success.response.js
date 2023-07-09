@@ -29,6 +29,13 @@ class CreatedResponseSuccess extends SuccessResponse {
     }
 }
 
+class OkResponseMessage extends SuccessResponse {
+    constructor({ message = ResponseMessageCode.OK, status = StatusCode.OK, metadata = {}}) {
+        super({ message, status, metadata })
+    }
+}
+
 module.exports = {
     CreatedResponseSuccess,
+    OkResponseMessage
 }

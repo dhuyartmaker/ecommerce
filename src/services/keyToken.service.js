@@ -6,7 +6,7 @@ const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 
 class KeyTokenService {
-    createToken = async ({ userId , publicKey, refreshToken }) => {
+    createToken = async ({ userId , publicKey, refreshToken, accessToken }) => {
         try {
             const publicKeyString = await publicKey.toString();
             const createToken = await keytokenModel.findOneAndUpdate({
@@ -15,6 +15,7 @@ class KeyTokenService {
                 publicKey: publicKeyString,
                 $push: { refreshTokenUsed: refreshToken },
                 refreshToken,
+                accessToken,
             }, {
                 upsert: true,
                 new: true

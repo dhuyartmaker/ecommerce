@@ -7,10 +7,10 @@ const router = express.Router()
 // router.use(apiKey)
 // router.use(permission('Permission!!'))
 
-router.post('/shop/signup', AccesController.signUp)
-router.post('/shop/signin', AccesController.signIn)
+router.post('/signup', AccesController.signUp)
+router.post('/signin', AccesController.signIn)
 
 router.use(authenticate)
-router.post('/shop/signout', AccesController.signOut)
+router.post('/signout', AccesController.signOut)
 
 module.exports = router;

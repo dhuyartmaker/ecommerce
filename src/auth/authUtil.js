@@ -41,8 +41,10 @@ const authenticate = asyncHandler(async (req, res, next) => {
     if (!accessToken) throw new AuthFailError("Not found token")
 
     const decodeUser = await JWT.decode(accessToken, userToken.publicKey);
+    console.log("==decodeUser==", decodeUser)
     if (decodeUser.userId !== userId) throw new AuthFailError("Authenticate fail!")
     req.keyStore = userToken
+    req.shopId = userId
     return next()
 })
 

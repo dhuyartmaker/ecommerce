@@ -31,7 +31,7 @@ class AccessService {
         await keyTokenService.createToken({
             userId: findShop._id,
             publicKey,
-            refreshToken: tokens.refreshToken
+            ...tokens
         })
         return {
             shop: await shopService.findByEmail({ email }),
