@@ -1,5 +1,6 @@
 const { BadRequestError, NotFoundError } = require("../core/error.response");
 const { productModel, electronicModel, clothingModel, productType } = require("../models/product.model");
+const { insertInventory } = require("../models/product/inventory.repo");
 const { findAllDraft, findAllProduct, updateProductById } = require("../models/product/product.repo");
 
 class ProductFactory {
@@ -69,7 +70,16 @@ class Product {
 
     async createProduct() {
         console.log("===this===", { ...this })
-        return await productModel.create({ ...this });
+        const newProduct = await productModel.create({ ...this });
+        if (newProduct) {
+            await insertInventory({
+                shopId: this.product_shop,
+                stock: this.product_quantity,
+                productId: newProduct._id,
+            })
+        }
+
+        return newProduct;
     }
 
     async updateProduct({ productId, payload }) {
