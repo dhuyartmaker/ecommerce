@@ -10,6 +10,7 @@ const app = express();
 
 // Init DB
 require('./dbs/initDb');
+require('./services/redis.service')
 
 app.use(morgan("dev"))
 app.use(helmet())

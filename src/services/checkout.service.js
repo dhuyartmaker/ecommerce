@@ -1,5 +1,6 @@
 const { NotFoundError, BadRequestError } = require("../core/error.response");
 const cartModel = require("../models/cart.model");
+const orderModel = require("../models/order.model");
 const { productModel } = require("../models/product.model");
 const discountService = require("./discount.service");
 const { acquireLock, releaseLock } = require("./redis.service");
@@ -78,12 +79,13 @@ class CheckoutService {
         }
 
         return {
-            shopOrderIdsNew
+            shopOrderIdsNew,
+            checkoutOrder
         }
     }
 
     async orderByUser({ cartId, userId, shop_order_ids }) {
-        const { shopOrderIdsNew } = this.checkoutReview({ cartId, userId, shop_order_ids });
+        const { shopOrderIdsNew, checkoutOrder } = this.checkoutReview({ cartId, userId, shop_order_ids });
         // Recheck
         const products = shopOrderIdsNew.flatMap(order => order.itemProducts)
         const acquireProduct = [];
@@ -99,6 +101,16 @@ class CheckoutService {
         if (acquireProduct.includes(false)) {
             throw new BadRequestError("Something error!")
         }
+
+        const newOrder = await orderModel.create({
+            order_userId: userId,
+            order_checkout: checkoutOrder,
+            order_products: shopOrderIdsNew
+        })
+
+        //  Remove product from cart
+
+        return newOrder;
     }
 }
 

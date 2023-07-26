@@ -1,6 +1,10 @@
 const redis = require("redis")
-const { promisify } = require("../utils")
-const redisClient = redis.createClient()
+const { promisify } = require("util")
+const redisClient = redis.createClient({
+    url: 'redis://localhost:6379'
+})
+
+redisClient.on('error', err => console.log('Redis Client Error', err));
 
 const pexpire = promisify(redisClient.pExpire).bind(redisClient)
 const setxnAsync = promisify(redisClient.setNX).bind(redisClient)
